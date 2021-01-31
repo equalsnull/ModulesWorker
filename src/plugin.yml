@@ -1,0 +1,13 @@
+main: equalsnull.ModulesWorker.Main
+name: ModulesWorker
+version: 1.0
+author: equalsnull
+description: Plugin Manager
+api-version: 1.15
+commands:
+  enable:
+    aliases: [activate]
+  disable:
+    aliases: [deactivate]
+  reload:
+  
