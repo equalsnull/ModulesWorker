@@ -10,4 +10,6 @@ commands:
   disable:
     aliases: [deactivate]
   reload:
+  download:
+    aliases: [get]
   

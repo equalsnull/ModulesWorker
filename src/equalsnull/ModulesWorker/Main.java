@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -51,11 +52,12 @@ public class Main extends JavaPlugin {
     		if(label.equalsIgnoreCase("download") || label.equalsIgnoreCase("get")) {
         		if(hasRight(sender)) {
         			String link = args[0];
-        			String name = link.substring(link.lastIndexOf("/"), link.length());
-        			try {
-        				downloadFile(link,name);
-        				sender.sendMessage("Done!");
-        			}catch(Exception e) {
+        			String name = "plugins/"+link.substring(link.lastIndexOf("/")+1, link.length());
+        			System.out.println(link);
+        			System.out.println(name);
+        			if(writeFileDataToFile(link,name)) {
+        				sender.sendMessage("Downloaded sucessfully");
+        			}else {
         				sender.sendMessage("Error!");
         			}
         			
@@ -94,5 +96,32 @@ public class Main extends JavaPlugin {
         if (out != null) {
             out.close();
         }
+    }
+    private boolean writeFileDataToFile(String fromUrl, String localFileName) {
+    	File localFile = new File(localFileName);
+        if (localFile.exists()) {
+            localFile.delete();
+        }
+
+        OutputStream output = null;
+        InputStream input = null;
+        
+        try {
+        	localFile.createNewFile();
+        	URLConnection conn = new URL(fromUrl).openConnection();
+        	conn.connect();
+        	output = new FileOutputStream(localFile);
+        	input = conn.getInputStream();
+        	byte[] fileChunk = new byte[8*1024];
+        	int bytesRead;
+        	while ((bytesRead = input.read(fileChunk )) != -1) {
+        		output.write(fileChunk , 0, bytesRead);
+        	}
+          
+          return true;
+        } catch (IOException e) {
+          //System.out.println("Receiving file at " + conn.getURL().toString() + " failed");
+        }
+        return false;
     }
 }
